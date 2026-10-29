@@ -1,1000 +1,242 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <title>Ramesh N — AI Engineer | Cinematic Portfolio</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg: #04040a;
-      --glow: #7dd3ff;
-      --glow2: #ff8a5c;
-      --card-bg: rgba(14, 16, 26, 0.55);
-      --card-border: rgba(140, 180, 255, 0.15);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      background: var(--bg);
-      color: #eef2ff;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      overflow-x: hidden;
-    }
-
-    #bg-canvas {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      display: block;
-    }
-
-    #vignette {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      transition: opacity 1.2s;
-      background: radial-gradient(ellipse at 50% 40%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 75%, rgba(0, 0, 0, 0.9) 100%);
-    }
-
-    #floorglow {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 45%;
-      z-index: 1;
-      pointer-events: none;
-      background: linear-gradient(to top, rgba(120, 170, 255, 0.06), transparent);
-    }
-
-    .content {
-      position: relative;
-      z-index: 2;
-    }
-
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 20;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 22px 48px;
-      backdrop-filter: blur(10px);
-      background: linear-gradient(to bottom, rgba(4, 4, 10, 0.6), transparent);
-    }
-
-    nav .logo {
-      font-weight: 700;
-      letter-spacing: 3px;
-      font-size: 14px;
-      color: var(--glow);
-      text-shadow: 0 0 12px rgba(125, 211, 255, 0.6);
-    }
-
-    nav ul {
-      display: flex;
-      gap: 34px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    nav a {
-      color: #c9d4ff;
-      text-decoration: none;
-      font-size: 13px;
-      letter-spacing: 1px;
-      opacity: 0.75;
-      transition: opacity .3s;
-    }
-
-    nav a:hover {
-      opacity: 1;
-    }
-
-    .hero {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      position: relative;
-    }
-
-    .hero h1 {
-      font-size: clamp(38px, 7vw, 84px);
-      margin: 0;
-      font-weight: 200;
-      letter-spacing: 2px;
-      background: linear-gradient(120deg, #fff, #9fd0ff 60%, #7dd3ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 60px rgba(125, 211, 255, 0.15);
-    }
-
-    .hero p {
-      color: #8ea0d0;
-      letter-spacing: 4px;
-      font-size: 12px;
-      text-transform: uppercase;
-      margin-top: 14px;
-    }
-
-    .hero .sub {
-      margin-top: 26px;
-      max-width: 560px;
-      color: #aebbe8;
-      font-size: 15px;
-      line-height: 1.7;
-      opacity: 0.85;
-    }
-
-    .scroll-hint {
-      position: absolute;
-      bottom: 40px;
-      font-size: 11px;
-      color: #7488c0;
-      letter-spacing: 2px;
-      opacity: 0.6;
-    }
-
-    section.wrap {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 110px 40px;
-      position: relative;
-    }
-
-    .section-title {
-      font-size: 12px;
-      letter-spacing: 4px;
-      color: var(--glow);
-      text-transform: uppercase;
-      margin-bottom: 14px;
-      opacity: 0.8;
-    }
-
-    .section-heading {
-      font-size: 34px;
-      font-weight: 300;
-      margin-bottom: 44px;
-      color: #f2f5ff;
-    }
-
-    .grid {
-      display: grid;
-      gap: 22px;
-    }
-
-    .grid-1 {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .grid-2 {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .grid-3 {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .grid-4 {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @media(max-width:1000px) {
-
-      .grid-1,
-      .grid-2,
-      .grid-3,
-      .grid-4 {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media(max-width:600px) {
-
-      .grid-1,
-      .grid-2,
-      .grid-3,
-      .grid-4 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 26px;
-      backdrop-filter: blur(14px);
-      box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.7);
-      position: relative;
-      transition: box-shadow .4s, border-color .4s;
-      cursor: pointer;
-      will-change: transform;
-    }
-
-    .card:hover {
-      border-color: rgba(125, 211, 255, 0.4);
-      box-shadow: 0 20px 60px -15px rgba(125, 211, 255, 0.15);
-    }
-
-    .card h3 {
-      margin: 0 0 10px;
-      font-weight: 400;
-      font-size: 17px;
-      letter-spacing: 0.3px;
-      color: #fff;
-    }
-
-    .card p,
-    .card li {
-      color: #b6c2ea;
-      font-size: 13.5px;
-      line-height: 1.65;
-      margin: 0;
-    }
-
-    .card small {
-      color: #7488c0;
-      display: block;
-      margin-top: 8px;
-      font-size: 11px;
-      letter-spacing: 1px;
-    }
-
-    .card a.card-link {
-      color: #7dd3ff;
-      text-decoration: none;
-      font-size: 13px;
-    }
-
-    .skill-tag {
-      display: inline-block;
-      padding: 5px 12px;
-      margin: 4px 4px 0 0;
-      border-radius: 20px;
-      background: rgba(125, 211, 255, 0.08);
-      border: 1px solid rgba(125, 211, 255, 0.25);
-      font-size: 11.5px;
-      color: #bfe6ff;
-    }
-
-    #activate-toggle {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 10px 10px 18px;
-      border-radius: 40px;
-      border: 1px solid rgba(125, 211, 255, 0.5);
-      background: radial-gradient(circle at 30% 30%, rgba(125, 211, 255, 0.2), rgba(10, 10, 20, 0.9));
-      cursor: pointer;
-      box-shadow: 0 0 25px rgba(125, 211, 255, 0.3), 0 0 60px rgba(125, 211, 255, 0.1);
-      animation: pulseGlow 2.6s ease-in-out infinite;
-      user-select: none;
-    }
-
-    #activate-toggle .label {
-      font-size: 12px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #eaf6ff;
-    }
-
-    #activate-toggle .switch {
-      width: 46px;
-      height: 24px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.1);
-      position: relative;
-      transition: background .4s;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    #activate-toggle .knob {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #7dd3ff;
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      transition: left .4s, background .4s;
-      box-shadow: 0 0 10px rgba(125, 211, 255, 0.8);
-    }
-
-    #activate-toggle.on .switch {
-      background: rgba(125, 211, 255, 0.35);
-    }
-
-    #activate-toggle.on .knob {
-      left: 24px;
-      background: #ff8a5c;
-      box-shadow: 0 0 10px rgba(255, 138, 92, 0.8);
-    }
-
-    @keyframes pulseGlow {
-
-      0%,
-      100% {
-        box-shadow: 0 0 20px rgba(125, 211, 255, 0.3), 0 0 50px rgba(125, 211, 255, 0.1);
-      }
-
-      50% {
-        box-shadow: 0 0 35px rgba(125, 211, 255, 0.55), 0 0 90px rgba(125, 211, 255, 0.25);
-      }
-    }
-
-    #status-tag {
-      position: fixed;
-      top: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 50;
-      font-size: 11px;
-      letter-spacing: 3px;
-      color: #7dd3ff;
-      opacity: 0;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(125, 211, 255, 0.8);
-      pointer-events: none;
-      transition: opacity .5s;
-    }
-
-    #lines-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 15;
-      pointer-events: none;
-      width: 100%;
-      height: 100%;
-    }
-
-    #lines-overlay line {
-      stroke: rgba(125, 211, 255, 0.6);
-      stroke-width: 1;
-      filter: drop-shadow(0 0 4px #7dd3ff);
-    }
-
-    footer {
-      text-align: center;
-      padding: 60px 0;
-      color: #5f6ea0;
-      font-size: 12px;
-      letter-spacing: 2px;
-    }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f1f0e6">
+  <meta name="description" content="Ramesh N. is an AI/ML engineering student and GSoC 2025 contributor building practical AI, full-stack software, and security tools.">
+  <meta property="og:title" content="Ramesh N. — AI Engineer & Full-Stack Developer">
+  <meta property="og:description" content="From AI research to useful, real-world software.">
+  <meta property="og:type" content="website">
+  <title>Ramesh N. — AI Engineer & Full-Stack Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/site.css">
+  <script src="./assets/site.js" defer></script>
+  <script src="./assets/liquid-ink.js" defer></script>
 </head>
-
 <body>
-
-  <canvas id="bg-canvas"></canvas>
-  <div id="vignette"></div>
-  <div id="floorglow"></div>
-  <svg id="lines-overlay"></svg>
-  <div id="status-tag">SYSTEM DORMANT</div>
-
-  <div class="content">
-    <nav>
-      <div class="logo">RAMESH&nbsp;N // CORE</div>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#experience">Experience</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-
-    <section class="hero">
-      <p>AI &amp; PROMPT ENGINEERING ENTHUSIAST</p>
-      <h1>RAMESH N</h1>
-      <p class="sub">Building intelligent, interactive systems — from generative AI and RAG
-        pipelines to gaming AI &amp; NPC design. First-year AI &amp; ML engineer at SITAMS, Chittoor.</p>
-      <div class="scroll-hint">the room is calm — toggle the core to awaken it ↓</div>
-    </section>
-
-    <!-- ABOUT — 2 separate cards -->
-    <section class="wrap" id="about">
-      <div class="section-title">Identity</div>
-      <div class="section-heading">About</div>
-      <div class="grid grid-1">
-        <div class="card" data-reaction="about">
-          <h3>Who I Am</h3>
-          <p>First-year B.Tech student specializing in Artificial Intelligence &amp; Machine Learning
-            at SITAMS, Chittoor. I believe in learning by doing — building real systems and growing
-            step by step as an AI engineer.</p>
-          <small>Chittoor, Andhra Pradesh, India</small>
-        </div>
-        <div class="card" data-reaction="about">
-          <h3>Focus Areas</h3>
-          <p>Machine Learning &amp; Neural Networks · Generative AI &amp; RAG · Cybersecurity
-            fundamentals · Gaming AI &amp; intelligent NPC design.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SKILLS — separate cards -->
-    <section class="wrap" id="skills">
-      <div class="section-title">Capability</div>
-      <div class="section-heading">Skills</div>
-      <div class="grid grid-2">
-        <div class="card" data-reaction="skills">
-          <h3>Tech Skills</h3>
-          <span class="skill-tag">CSS</span><span class="skill-tag">PostgreSQL</span>
-          <span class="skill-tag">SQLite</span><span class="skill-tag">RAG</span>
-          <span class="skill-tag">Prompt Engineering</span>
-        </div>
-        <div class="card" data-reaction="skills">
-          <h3>Languages</h3>
-          <span class="skill-tag">English</span><span class="skill-tag">Telugu</span>
-          <span class="skill-tag">Japanese</span><span class="skill-tag">Tamil</span>
-          <span class="skill-tag">Spanish</span><span class="skill-tag">Kannada</span>
-        </div>
-        <div class="card" data-reaction="skills">
-          <h3>Certifications</h3>
-          <p>MCP (Model Context Protocol)<br>Computer Networks &amp; Network Security<br>
-            RAG (Retrieval-Augmented Generation)<br>Data Science<br>Prompt Engineering for ChatGPT</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROJECTS — 8 separate cards -->
-    <section class="wrap" id="projects">
-      <div class="section-title">Systems Built</div>
-      <div class="section-heading">Projects</div>
-      <div class="grid grid-3">
-        <div class="card" data-reaction="projects">
-          <h3>AGROSENSE</h3>
-          <p>Smart agriculture sensing system.</p>
-          <a class="card-link" href="https://github.com/N-RameshKernel/AGROSENSE" target="_blank">View repo
-            →</a>
-        </div>
-        <div class="card" data-reaction="projects">
-          <h3>CloudGuard</h3>
-          <p>Cloud security monitoring.</p>
-          <a class="card-link" href="https://github.com/N-RameshKernel/CloudGuard" target="_blank">View repo
-            →</a>
-        </div>
-        <div class="card" data-reaction="projects">
-          <h3>AUTOSECAI</h3>
-          <p>Automated security AI system.</p>
-          <a class="card-link" href="https://github.com/N-RameshKernel/AUTOSECAI" target="_blank">View repo
-            →</a>
-        </div>
-        <div class="card" data-reaction="projects">
-          <h3>PixelNav</h3>
-          <p>Pixel-based navigation system.</p>
-          <a class="card-link" href="https://github.com/N-RameshKernel/PixelNav" target="_blank">View repo
-            →</a>
-        </div>
-        <div class="card" data-reaction="projects">
-          <h3>SYNAPSE_WAR</h3>
-          <p>AI strategy / NPC combat system.</p>
-          <a class="card-link" href="https://github.com/N-RameshKernel/SYNAPSE_WAR" target="_blank">View repo
-            →</a>
-        </div>
-        <div class="card" data-reaction="projects">
-          <h3>SimAgent-X</h3>
-          <p>Simulated intelligent agents.</p>
-          <a class="card-link" href="https://github.com/N-RameshKernel/SimAgent-X" target="_blank">View repo
-            →</a>
-        </div>
-        <div class="card" data-reaction="projects">
-          <h3>NeuroVerse</h3>
-          <p>Neural network exploration environment.</p>
-          <a class="card-link" href="https://github.com/N-RameshKernel/NeuroVerse" target="_blank">View repo
-            →</a>
-        </div>
-        <div class="card" data-reaction="projects">
-          <h3>AutoCortex-AI</h3>
-          <p>Autonomous cognitive AI system.</p>
-          <a class="card-link" href="https://github.com/N-RameshKernel/AutoCortex-AI" target="_blank">View
-            repo →</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- EXPERIENCE — separate cards -->
-    <section class="wrap" id="experience">
-      <div class="section-heading">Experience</div>
-      <div class="grid grid-4">
-        <div class="card" data-reaction="experience">
-          <h3>JPmorganChase</h3>
-          <p>Software Engineer</p><small>May 2026 – jul 2026</small>
-        </div>
-        <div class="card" data-reaction="experience">
-          <h3>Tata Group</h3>
-          <p>GenAI Data Analytics Virtual Intern</p><small>May 2026 – jun 2026</small>
-        </div>
-        <div class="card" data-reaction="experience">
-          <h3>Delottie</h3>
-          <p>Technology Intern</p><small>May 2026 – jun 2026</small>
-        </div>
-        <div class="card" data-reaction="experience">
-          <h3>Delottie</h3>
-          <p>Cyber Security Intern</p><small>May 2026 – jun 2026</small>
-        </div>
-        <div class="card" data-reaction="experience">
-          <h3>AI Intern — MyDailyWork</h3>
-          <p>Artificial Intelligence Intern</p><small>Mar 2026 – Apr 2026</small>
-        </div>
-        <div class="card" data-reaction="experience">
-          <h3>ML Intern — SaiKet Systems</h3>
-          <p>Machine Learning Intern</p><small>Feb 2026 – Mar 2026</small>
-        </div>
-        <div class="card" data-reaction="experience">
-          <h3>Open Source Developer — GSoC</h3>
-          <p>Google Summer of Code</p><small>May 2025 – Aug 2025</small>
-        </div>
-        <div class="card" data-reaction="experience">
-          <h3>B.Tech AI &amp; ML — SITAMS</h3>
-          <p>Chittoor, Andhra Pradesh</p><small>Jul 2025 – 2029</small>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACT — separate cards -->
-    <section class="wrap" id="contact">
-      <div class="section-title">Signal</div>
-      <div class="section-heading">Contact</div>
-      <div class="grid grid-4">
-        <div class="card" data-reaction="contact">
-          <h3>GitHub</h3>
-          <p>N-RameshKernel</p>
-          <a class="card-link" href="https://github.com/N-RameshKernel" target="_blank">Visit →</a>
-        </div>
-        <div class="card" data-reaction="contact">
-          <h3>LinkedIn</h3>
-          <p>Ramesh N</p>
-          <a class="card-link" href="https://www.linkedin.com/in/ramesh--n" target="_blank">Visit →</a>
-        </div>
-        <div class="card" data-reaction="contact">
-          <h3>Instagram</h3>
-          <p>@itsramesh____</p>
-          <a class="card-link" href="https://www.instagram.com/itsramesh____/" target="_blank">Visit →</a>
-        </div>
-        <div class="card" data-reaction="contact">
-          <h3>Email</h3>
-          <p>galaxyfg0623@gmail.com</p>
-          <a class="card-link" href="mailto:galaxyfg0623@gmail.com">Send →</a>
-        </div>
-      </div>
-    </section>
-
-    <footer>© 2025 RAMESH N — Living Portfolio System</footer>
-  </div>
-
-  <div id="activate-toggle">
-    <span class="label">Core</span>
-    <div class="switch">
-      <div class="knob"></div>
+  <canvas id="liquid-ink-canvas" class="ink-trail" aria-hidden="true"></canvas>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container nav-row">
+      <a class="wordmark" href="#top" aria-label="Ramesh N. — home">RN<span>.</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
+        <span></span><span></span>
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a class="nav-contact" href="#contact">Let’s talk <span aria-hidden="true">↗</span></a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script type="module">
-    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+  <main id="main">
+    <section class="hero section-pad" id="top">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> AI / ML · FULL-STACK · CYBERSECURITY</p>
+          <h1>AI that works <em>beyond the demo.</em></h1>
+          <p class="hero-lead">I’m Ramesh N., an AI/ML engineering student and GSoC 2025 contributor. I build across LLMs, full-stack systems, and cybersecurity—with a focus on useful software for real-world problems.</p>
+          <div class="hero-actions">
+            <a class="button button-dark" href="#work">Explore selected work <span aria-hidden="true">↓</span></a>
+            <a class="text-link" href="mailto:galaxyfg0623@gmail.com">Get in touch <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="hero-facts" aria-label="Profile highlights">
+            <div><strong>GSoC ’25</strong><span>The Linux Foundation</span></div>
+            <div><strong>B.Tech AI/ML</strong><span>SITAMS · 2025–2029</span></div>
+            <div><strong>Chittoor</strong><span>Andhra Pradesh, India</span></div>
+          </div>
+        </div>
 
-    /* ---------------------------------------------------------
-       SCENE SETUP
-    --------------------------------------------------------- */
-    const canvas = document.getElementById('bg-canvas');
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(innerWidth, innerHeight);
+        <div class="signal-board" aria-label="A diagram representing a path from AI models to useful products">
+          <div class="board-top"><span>FIELD NOTES / 2025—26</span><span class="board-mark">RN—01</span></div>
+          <div class="board-inner">
+            <p class="board-kicker">FROM RESEARCH TO PRODUCT</p>
+            <svg class="signal-map" viewBox="0 0 560 340" role="img" aria-labelledby="map-title map-desc">
+              <title id="map-title">AI systems signal map</title>
+              <desc id="map-desc">A signal path links models, retrieval, and engineering to practical products.</desc>
+              <path class="map-grid" d="M0 68H560M0 136H560M0 204H560M0 272H560M70 0V340M210 0V340M350 0V340M490 0V340"></path>
+              <path class="map-track-under" d="M42 246 C120 246 108 99 218 99 S312 249 388 249 S438 136 518 136"></path>
+              <path class="map-track" d="M42 246 C120 246 108 99 218 99 S312 249 388 249 S438 136 518 136"></path>
+              <path class="map-branch" d="M218 99 C246 99 251 52 301 52"></path>
+              <circle class="map-node node-lime" cx="42" cy="246" r="11"></circle>
+              <circle class="map-node node-violet" cx="218" cy="99" r="13"></circle>
+              <circle class="map-node node-paper" cx="388" cy="249" r="9"></circle>
+              <circle class="map-node node-lime" cx="518" cy="136" r="12"></circle>
+              <circle class="map-node node-violet" cx="301" cy="52" r="7"></circle>
+              <text x="28" y="285">MODEL</text>
+              <text x="183" y="73">RAG / MCP</text>
+              <text x="354" y="285">SYSTEMS</text>
+              <text x="466" y="112">PRODUCT</text>
+              <text x="315" y="57">SECURITY</text>
+            </svg>
+            <div class="board-bottom"><span>IDEAS, ENGINEERED</span><span aria-hidden="true">↗</span></div>
+          </div>
+          <div class="board-stamp" aria-hidden="true">BUILD<br>WITH<br>INTENT</div>
+        </div>
+      </div>
+      <div class="container hero-note">
+        <span>OPEN TO AI/ML & JUNIOR SECURITY INTERNSHIPS</span>
+        <span class="note-rule" aria-hidden="true"></span>
+        <span>ALSO OPEN TO SELECT AI/ML PROJECTS</span>
+      </div>
+    </section>
 
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x04040a, 0.045);
+    <section class="work section-pad" id="work">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow"><span class="section-index">SELECTED WORK</span> / PINNED ON GITHUB</p>
+            <h2>Built to be <em>useful.</em></h2>
+          </div>
+          <p class="section-intro">A selection of AI, security, and computer-vision projects from my public GitHub profile.</p>
+        </div>
 
-    const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 200);
-    camera.position.set(0, 2.2, 11);
-    camera.lookAt(0, 0, 0);
+        <div class="project-grid">
+          <a class="project-card project-feature" href="https://github.com/N-RameshKernel/CloudGuard" target="_blank" rel="noopener noreferrer" aria-label="View CloudGuard on GitHub">
+            <div class="project-head"><span class="project-type">GSoC 2025 · CLOUD SECURITY</span><span class="project-arrow" aria-hidden="true">↗</span></div>
+            <div class="project-visual cloud-visual" aria-hidden="true">
+              <span class="cloud-label cloud-label-one">AWS</span>
+              <span class="cloud-label cloud-label-two">AZURE</span>
+              <span class="cloud-label cloud-label-three">GCP</span>
+              <svg viewBox="0 0 520 180"><path d="M43 118H472M145 118V63H375V118M260 63V28" /><circle cx="145" cy="118" r="7" /><circle cx="375" cy="118" r="7" /><circle cx="260" cy="28" r="7" /></svg>
+              <div class="cloud-core"><span>SECURITY</span><strong>01</strong></div>
+            </div>
+            <div class="project-copy">
+              <div><h3>CloudGuard</h3><p>A multi-cloud security dashboard developed during GSoC 2025, with vulnerability tracking, compliance insights, and remediation workflows.</p></div>
+              <div class="tag-row"><span>Python</span><span>AWS · Azure · GCP</span><span>DevSecOps</span></div>
+            </div>
+          </a>
 
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0x05060c, roughness: 0.25, metalness: 0.6 });
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), floorMat);
-    floor.rotation.x = -Math.PI / 2; floor.position.y = -4.2;
-    scene.add(floor);
+          <a class="project-card project-agro" href="https://github.com/N-RameshKernel/AGROSENSE" target="_blank" rel="noopener noreferrer" aria-label="View AGROSENSE on GitHub">
+            <div class="project-head"><span class="project-type">AI · AGRICULTURE</span><span class="project-arrow" aria-hidden="true">↗</span></div>
+            <div class="project-visual field-visual" aria-hidden="true">
+              <span class="field-sun"></span><span class="field-line field-line-one"></span><span class="field-line field-line-two"></span><span class="field-line field-line-three"></span>
+              <span class="field-caption">FIELD / SIGNAL</span>
+            </div>
+            <div class="project-copy">
+              <div><h3>AGROSENSE</h3><p>AI crop advice and plant-disease detection designed around the needs of farmers.</p></div>
+              <div class="tag-row"><span>FastAPI</span><span>React / TypeScript</span><span>ML</span></div>
+            </div>
+          </a>
 
-    const ambient = new THREE.AmbientLight(0x445577, 0.35);
-    scene.add(ambient);
-    const key = new THREE.PointLight(0x7dd3ff, 1.1, 40); key.position.set(4, 6, 6);
-    scene.add(key);
-    const rim = new THREE.PointLight(0xff8a5c, 0.5, 40); rim.position.set(-6, 3, -4);
-    scene.add(rim);
+          <a class="project-card project-katnyo" href="https://github.com/N-RameshKernel/KATNYO-AI" target="_blank" rel="noopener noreferrer" aria-label="View KATNYO AI on GitHub">
+            <div class="project-head"><span class="project-type">AUTOML · STRUCTURED DATA</span><span class="project-arrow" aria-hidden="true">↗</span></div>
+            <div class="project-visual katnyo-visual" aria-hidden="true">
+              <div class="katnyo-window">
+                <div class="katnyo-window-top"><span></span><span></span><span></span><b>MODEL WORKSPACE</b></div>
+                <div class="katnyo-workspace">
+                  <div class="katnyo-dataset"><small>DATASET / CSV</small><strong>dataset.csv</strong><span>PROFILED · STRUCTURED DATA</span></div>
+                  <div class="katnyo-chart"><small>MODEL CANDIDATES</small><div><i></i><b>MODEL / 01</b><em>COMPARE</em></div><div><i></i><b>MODEL / 02</b><em>COMPARE</em></div><div><i></i><b>MODEL / 03</b><em>COMPARE</em></div></div>
+                </div>
+              </div>
+              <span class="katnyo-caption">PROFILE / TRAIN / COMPARE</span>
+            </div>
+            <div class="project-copy">
+              <div><h3>KATNYO AI</h3><p>A beta AutoML workspace for structured CSV data: profile datasets, train and compare models, explore predictions, and track experiments.</p></div>
+              <div class="tag-row"><span>Python</span><span>FastAPI · Vite</span><span>MLflow</span></div>
+            </div>
+          </a>
+        </div>
 
-    const DEFAULT_AMBIENT = 0.35, DEFAULT_KEY = 1.1, DEFAULT_RIM = 0.5;
+        <div class="research-strip">
+          <span class="research-label">RESEARCH THREAD</span>
+          <div><h3>AgroSat-VLM</h3><p>Vision-language research using 75K+ satellite-image question-and-answer pairs.</p></div>
+          <span class="research-mark" aria-hidden="true">↗</span>
+        </div>
+      </div>
+    </section>
 
-    /* ---------------------------------------------------------
-       BLACK HOLE GROUP
-    --------------------------------------------------------- */
-    const bh = new THREE.Group();
-    bh.scale.set(0.0001, 0.0001, 0.0001);
-    scene.add(bh);
+    <section class="about section-pad" id="about">
+      <div class="container about-grid">
+        <div class="about-copy">
+          <p class="eyebrow"><span class="section-index">APPROACH</span> / HOW I WORK</p>
+          <h2>Curious about the model. Serious about the <em>system.</em></h2>
+          <p>I like moving ideas into working software. My work sits between AI and LLM engineering, full-stack product development, and cybersecurity—with attention to how the pieces behave together.</p>
+          <p class="about-location"><span aria-hidden="true">⌖</span> Based in Chittoor, Andhra Pradesh, India</p>
+        </div>
+        <div class="about-details">
+          <article class="detail-card education-card">
+            <p class="eyebrow">EDUCATION</p>
+            <h3>B.Tech, Artificial Intelligence &amp; Machine Learning</h3>
+            <p>Sreenivasa Institute of Technology and Management Studies</p>
+            <div class="detail-foot"><span>SITAMS</span><span>2025—2029</span></div>
+          </article>
+          <article class="detail-card toolkit-card">
+            <p class="eyebrow">TOOLKIT</p>
+            <h3>Tools I build with</h3>
+            <div class="tool-groups">
+              <div><span>LANGUAGES</span><p>Python · TypeScript · JavaScript · Java · C++</p></div>
+              <div><span>PRODUCT</span><p>FastAPI · React · Next.js · PostgreSQL · Docker</p></div>
+              <div><span>AI &amp; SECURITY</span><p>LLMs · RAG · MCP · Burp Suite · Metasploit</p></div>
+            </div>
+          </article>
+          <div class="language-line"><span>LANGUAGES</span><p>English · Telugu · Japanese · Tamil</p></div>
+        </div>
+      </div>
+    </section>
 
-    const coreMat = new THREE.ShaderMaterial({
-      uniforms: { time: { value: 0 } },
-      vertexShader: `varying vec3 vN; void main(){ vN = normalize(normalMatrix*normal);
-    gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0);} `,
-      fragmentShader: `
-    varying vec3 vN; uniform float time;
-    void main(){
-      float rim = pow(1.0 - abs(vN.z), 3.5);
-      vec3 glow = mix(vec3(0.0), vec3(0.35,0.65,1.0), rim);
-      gl_FragColor = vec4(glow*0.9, 1.0);
-    }`
-    });
-    const core = new THREE.Mesh(new THREE.SphereGeometry(1.15, 64, 64), coreMat);
-    bh.add(core);
+    <section class="experience section-pad" id="experience">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow"><span class="section-index">EXPERIENCE</span> / CONTRIBUTIONS &amp; LEARNING</p>
+            <h2>Learning by <em>doing.</em></h2>
+          </div>
+          <p class="section-intro">Open-source contribution, internships, and clearly labeled job simulations.</p>
+        </div>
+        <div class="timeline">
+          <article class="timeline-row">
+            <div class="timeline-date"><time datetime="2025-05">MAY—AUG 2025</time><span class="timeline-dot"></span></div>
+            <div class="timeline-main"><div><h3>Google Summer of Code</h3><p>The Linux Foundation · Open Source Developer</p></div><span class="timeline-kind">CONTRIBUTOR</span></div>
+            <p class="timeline-desc">Developed CloudGuard and contributed through open-source engineering workflows, code reviews, documentation, and collaboration.</p>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-date"><time datetime="2026-02">FEB—MAR 2026</time><span class="timeline-dot"></span></div>
+            <div class="timeline-main"><div><h3>SaiKet Systems</h3><p>Machine Learning Intern</p></div><span class="timeline-kind">INTERNSHIP</span></div>
+            <p class="timeline-desc">Worked on data preparation, feature engineering, model evaluation, and practical machine-learning workflows.</p>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-date"><time datetime="2026-03">MAR—APR 2026</time><span class="timeline-dot"></span></div>
+            <div class="timeline-main"><div><h3>MyDailyWork</h3><p>Artificial Intelligence Intern</p></div><span class="timeline-kind">INTERNSHIP</span></div>
+            <p class="timeline-desc">Built experience with applied AI projects and practical implementation tasks.</p>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-date"><time datetime="2026-05">MAY—JUL 2026</time><span class="timeline-dot"></span></div>
+            <div class="timeline-main"><div><h3>Forage job simulations</h3><p>JPMorganChase · Tata Group · Deloitte</p></div><span class="timeline-kind">SIMULATIONS</span></div>
+            <p class="timeline-desc">Completed software engineering, GenAI data analytics, technology, and cybersecurity simulation work.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-    const diskMat = new THREE.ShaderMaterial({
-      transparent: true, side: THREE.DoubleSide, depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      uniforms: { time: { value: 0 } },
-      vertexShader: `varying vec2 vUv; void main(){ vUv=uv;
-    gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0);} `,
-      fragmentShader: `
-    varying vec2 vUv; uniform float time;
-    void main(){
-      vec2 c = vUv-0.5; float r = length(c)*2.0;
-      float ang = atan(c.y,c.x);
-      float swirl = sin(ang*8.0 + time*2.5 - r*10.0)*0.5+0.5;
-      float band = smoothstep(0.15,0.5,r)*smoothstep(1.0,0.55,r);
-      vec3 hot = mix(vec3(1.0,0.55,0.15), vec3(0.5,0.8,1.0), r);
-      vec3 col = hot*(0.4+0.9*swirl)*band;
-      float alpha = band*(0.55+0.45*swirl);
-      gl_FragColor = vec4(col, alpha);
-    }`
-    });
-    const disk = new THREE.Mesh(new THREE.RingGeometry(1.5, 4.4, 128), diskMat);
-    disk.rotation.x = Math.PI / 2.35;
-    bh.add(disk);
+    <section class="contact section-pad" id="contact">
+      <div class="container contact-panel">
+        <div class="contact-copy">
+          <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> OPEN TO THE RIGHT CHALLENGE</p>
+          <h2>Have a problem worth <em>building for?</em></h2>
+          <p>I’m looking for AI engineering or junior penetration-testing internships, and I’m open to select AI/ML projects.</p>
+        </div>
+        <div class="contact-actions">
+          <a class="button button-lime" href="mailto:galaxyfg0623@gmail.com">Email Ramesh <span aria-hidden="true">↗</span></a>
+          <a href="https://www.linkedin.com/in/ramesh--n/" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+          <a href="https://github.com/N-RameshKernel" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="contact-scribble" aria-hidden="true">LET’S<br>BUILD.</div>
+      </div>
+    </section>
+  </main>
 
-    const arcMat = new THREE.ShaderMaterial({
-      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
-      uniforms: { time: { value: 0 } },
-      vertexShader: `varying vec2 vUv; void main(){vUv=uv;
-    gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
-      fragmentShader: `varying vec2 vUv; uniform float time;
-    void main(){ float r=length(vUv-0.5)*2.0;
-      float band = smoothstep(0.85,0.92,r)*smoothstep(1.0,0.93,r);
-      vec3 col = vec3(0.85,0.95,1.0)*band*1.8;
-      gl_FragColor = vec4(col, band);
-    }`
-    });
-    const arc = new THREE.Mesh(new THREE.RingGeometry(1.25, 1.42, 128), arcMat);
-    bh.add(arc);
-
-    function glowTexture() {
-      const s = 256, cvs = document.createElement('canvas'); cvs.width = cvs.height = s;
-      const ctx = cvs.getContext('2d');
-      const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-      g.addColorStop(0, 'rgba(140,200,255,0.9)');
-      g.addColorStop(0.4, 'rgba(120,170,255,0.35)');
-      g.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
-      return new THREE.CanvasTexture(cvs);
-    }
-    const haloSprite = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: glowTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
-    }));
-    haloSprite.scale.set(9, 9, 1);
-    haloSprite.material.opacity = 0;
-    bh.add(haloSprite);
-
-    const PCOUNT = 1600;
-    const pGeo = new THREE.BufferGeometry();
-    const pPos = new Float32Array(PCOUNT * 3);
-    const pData = [];
-    for (let i = 0; i < PCOUNT; i++) {
-      const radius = THREE.MathUtils.randFloat(2.2, 9);
-      const angle = Math.random() * Math.PI * 2;
-      const tilt = THREE.MathUtils.randFloat(-0.6, 0.6);
-      pData.push({ radius, angle, speed: THREE.MathUtils.randFloat(0.15, 0.5), tilt });
-      pPos[i * 3] = Math.cos(angle) * radius;
-      pPos[i * 3 + 1] = Math.sin(tilt) * radius * 0.2;
-      pPos[i * 3 + 2] = Math.sin(angle) * radius;
-    }
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({ color: 0x9fd7ff, size: 0.045, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
-    const particles = new THREE.Points(pGeo, pMat);
-    bh.add(particles);
-    particles.visible = false; disk.visible = false; arc.visible = false;
-
-    const DCOUNT = 900;
-    const dGeo = new THREE.BufferGeometry();
-    const dPos = new Float32Array(DCOUNT * 3);
-    for (let i = 0; i < DCOUNT; i++) {
-      dPos[i * 3] = THREE.MathUtils.randFloatSpread(60);
-      dPos[i * 3 + 1] = THREE.MathUtils.randFloatSpread(30);
-      dPos[i * 3 + 2] = THREE.MathUtils.randFloatSpread(60);
-    }
-    dGeo.setAttribute('position', new THREE.BufferAttribute(dPos, 3));
-    const dustMat = new THREE.PointsMaterial({ color: 0x445577, size: 0.03, transparent: true, opacity: 0.5 });
-    const dust = new THREE.Points(dGeo, dustMat);
-    scene.add(dust);
-
-    function spawnShockwave(color = 0x7dd3ff, maxScale = 14, dur = 1.6) {
-      const geo = new THREE.RingGeometry(0.5, 0.65, 80);
-      const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.8, side: THREE.DoubleSide });
-      const ring = new THREE.Mesh(geo, mat);
-      ring.rotation.x = Math.PI / 2;
-      scene.add(ring);
-      gsap.to(ring.scale, { x: maxScale, y: maxScale, z: maxScale, duration: dur, ease: 'power2.out' });
-      gsap.to(mat, { opacity: 0, duration: dur, ease: 'power2.out', onComplete: () => { scene.remove(ring); geo.dispose(); mat.dispose(); } });
-    }
-
-    /* ---------------------------------------------------------
-       STATE
-    --------------------------------------------------------- */
-    let activated = false;
-    let transitioning = false;
-    let speedMul = 1;
-    let radiusMul = 1;
-    let diskPulseScale = 1;
-    const clock = new THREE.Clock();
-
-    function animate() {
-      requestAnimationFrame(animate);
-      const t = clock.getElapsedTime();
-      const dt = clock.getDelta();
-
-      coreMat.uniforms.time.value = t;
-      diskMat.uniforms.time.value = t;
-      arcMat.uniforms.time.value = t;
-
-      disk.rotation.z += dt * 0.35 * speedMul;
-      arc.rotation.z -= dt * 0.12 * speedMul;
-
-      const breathe = 1 + Math.sin(t * 0.6) * 0.015;
-      core.scale.setScalar(breathe * diskPulseScale);
-
-      if (activated) {
-        haloSprite.material.opacity = 0.7 + Math.sin(t * 0.8) * 0.15;
-        const posAttr = particles.geometry.attributes.position;
-        for (let i = 0; i < PCOUNT; i++) {
-          const d = pData[i];
-          d.angle += dt * d.speed * speedMul * 0.6;
-          const r = d.radius * radiusMul;
-          posAttr.array[i * 3] = Math.cos(d.angle) * r;
-          posAttr.array[i * 3 + 1] = Math.sin(d.tilt) * r * 0.18 + Math.sin(t + i) * 0.05;
-          posAttr.array[i * 3 + 2] = Math.sin(d.angle) * r;
-        }
-        posAttr.needsUpdate = true;
-        dust.rotation.y += dt * 0.01;
-      }
-
-      camera.position.x = Math.sin(t * 0.05) * 1.2;
-      camera.lookAt(0, 0.5, 0);
-
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener('resize', () => {
-      renderer.setSize(innerWidth, innerHeight);
-      camera.aspect = innerWidth / innerHeight;
-      camera.updateProjectionMatrix();
-    });
-
-    /* ---------------------------------------------------------
-       TOGGLE — ACTIVATE / DEACTIVATE
-    --------------------------------------------------------- */
-    const toggle = document.getElementById('activate-toggle');
-    const statusTag = document.getElementById('status-tag');
-    const cards = Array.from(document.querySelectorAll('.card'));
-    const cardDrifts = new Map(); // card -> tween
-
-    toggle.addEventListener('click', () => {
-      if (transitioning) return;
-      if (!activated) {
-        activated = true; transitioning = true;
-        toggle.classList.add('on');
-        runActivationSequence();
-      } else {
-        activated = false; transitioning = true;
-        toggle.classList.remove('on');
-        runDeactivationSequence();
-      }
-    });
-
-    function runActivationSequence() {
-      statusTag.style.opacity = 1;
-      statusTag.textContent = 'DIMMING ROOM...';
-      const tl = gsap.timeline({ onComplete: () => { transitioning = false; } });
-
-      tl.to(ambient, { intensity: 0.08, duration: 1.4 }, 0);
-      tl.to(key, { intensity: 0.3, duration: 1.4 }, 0);
-      tl.to(rim, { intensity: 0.15, duration: 1.4 }, 0);
-      tl.to('#vignette', { opacity: 1.3, duration: 1.4 }, 0);
-
-      tl.call(() => statusTag.textContent = 'ENERGY FORMING...');
-      tl.to(bh.scale, { x: 0.35, y: 0.35, z: 0.35, duration: 1.3, ease: 'power2.out' }, 1.2);
-      tl.to(haloSprite.material, { opacity: 1, duration: 1.0 }, 1.2);
-
-      tl.call(() => statusTag.textContent = 'COLLAPSING...');
-      tl.to(bh.scale, { x: 0.02, y: 0.02, z: 0.02, duration: 0.55, ease: 'power4.in' }, 2.6);
-
-      tl.call(() => {
-        statusTag.textContent = 'BLACK HOLE STABLE';
-        disk.visible = true; arc.visible = true; particles.visible = true;
-      }, null, 3.15);
-      tl.to(bh.scale, { x: 1, y: 1, z: 1, duration: 1.1, ease: 'elastic.out(1,0.6)' }, 3.15);
-
-      tl.call(() => spawnShockwave(0x7dd3ff, 20, 2.2), null, 3.3);
-
-      tl.call(() => {
-        statusTag.textContent = 'ANTI-GRAVITY ACTIVE';
-        activateAntiGravity();
-      }, null, 3.9);
-
-      tl.to(statusTag, { opacity: 0, duration: 1, delay: 1.5 });
-    }
-
-    function runDeactivationSequence() {
-      statusTag.style.opacity = 1;
-      statusTag.textContent = 'STABILIZING SYSTEM...';
-
-      // stop drifting, settle cards back to origin
-      settleAllCards();
-
-      const tl = gsap.timeline({ onComplete: () => { transitioning = false; } });
-
-      tl.call(() => spawnShockwave(0xff8a5c, 12, 1.4));
-      tl.call(() => statusTag.textContent = 'CORE COLLAPSING...');
-
-      tl.to({ v: radiusMul }, {
-        v: 0.05, duration: 1.2, ease: 'power2.in',
-        onUpdate: function () { radiusMul = this.targets()[0].v; }
-      }, 0.3);
-      tl.to({ v: speedMul }, {
-        v: 2.4, duration: 1.2, ease: 'power2.in',
-        onUpdate: function () { speedMul = this.targets()[0].v; }
-      }, 0.3);
-
-      tl.to(bh.scale, { x: 0.02, y: 0.02, z: 0.02, duration: 1.0, ease: 'power3.in' }, 1.4);
-      tl.call(() => { disk.visible = false; arc.visible = false; particles.visible = false; }, null, 2.3);
-
-      tl.to(bh.scale, { x: 0.0001, y: 0.0001, z: 0.0001, duration: 0.8, ease: 'power2.out' }, 2.4);
-      tl.to(haloSprite.material, { opacity: 0, duration: 0.8 }, 2.4);
-
-      tl.call(() => statusTag.textContent = 'RESTORING LIGHTS...', null, 3.0);
-      tl.to(ambient, { intensity: DEFAULT_AMBIENT, duration: 1.4 }, 3.0);
-      tl.to(key, { intensity: DEFAULT_KEY, duration: 1.4 }, 3.0);
-      tl.to(rim, { intensity: DEFAULT_RIM, duration: 1.4 }, 3.0);
-      tl.to('#vignette', { opacity: 1, duration: 1.4 }, 3.0);
-
-      tl.call(() => { statusTag.textContent = 'SYSTEM DORMANT'; speedMul = 1; radiusMul = 1; }, null, 4.2);
-      tl.to(statusTag, { opacity: 0, duration: 1, delay: 1.4 });
-    }
-
-    /* ---------------------------------------------------------
-       ANTI-GRAVITY
-    --------------------------------------------------------- */
-    function activateAntiGravity() {
-      cards.forEach((card, i) => {
-        gsap.set(card, { transformOrigin: 'center center' });
-        const driftLoop = () => {
-          if (!activated) return;
-          const tween = gsap.to(card, {
-            x: gsap.utils.random(-16, 16),
-            y: gsap.utils.random(-22, -4),
-            rotate: gsap.utils.random(-2.2, 2.2),
-            duration: gsap.utils.random(4.5, 7.5),
-            ease: 'sine.inOut',
-            onComplete: driftLoop
-          });
-          cardDrifts.set(card, tween);
-        };
-        const lift = gsap.fromTo(card, { y: 0 }, {
-          y: gsap.utils.random(-18, -6),
-          duration: 1.8, ease: 'power2.out', delay: i * 0.08,
-          onComplete: driftLoop
-        });
-        cardDrifts.set(card, lift);
-      });
-    }
-
-    function settleAllCards() {
-      cards.forEach((card, i) => {
-        const existing = cardDrifts.get(card);
-        if (existing) existing.kill();
-        gsap.to(card, {
-          x: 0, y: 0, rotate: 0, duration: 1.6, ease: 'power3.inOut', delay: i * 0.03
-        });
-      });
-      cardDrifts.clear();
-    }
-
-    /* ---------------------------------------------------------
-       CARD INTERACTIONS
-    --------------------------------------------------------- */
-    const overlaySvg = document.getElementById('lines-overlay');
-
-    cards.forEach(card => {
-      card.addEventListener('click', () => {
-        if (!activated) return;
-        reactToCard(card.dataset.reaction, card);
-      });
-    });
-
-    function reactToCard(type, el) {
-      switch (type) {
-        case 'projects':
-          gsap.to(bh.scale, { x: 1.18, y: 1.18, z: 1.18, duration: 0.5, yoyo: true, repeat: 1, ease: 'power2.inOut' });
-          spawnShockwave(0xff8a5c, 10, 1.1);
-          break;
-        case 'about':
-          gsap.to(bh.scale, { x: 0.82, y: 0.82, z: 0.82, duration: 0.6, yoyo: true, repeat: 1, ease: 'power2.inOut' });
-          gsap.to({ v: 1 }, {
-            v: 0.55, duration: 0.5, yoyo: true, repeat: 1,
-            onUpdate: function () { radiusMul = this.targets()[0].v; }
-          });
-          break;
-        case 'skills':
-          gsap.to({ v: 1 }, {
-            v: 2.4, duration: 0.4, yoyo: true, repeat: 1,
-            onUpdate: function () { speedMul = this.targets()[0].v; }
-          });
-          drawEnergyLines(el);
-          break;
-        case 'experience':
-          spawnShockwave(0x9fd7ff, 16, 1.8);
-          break;
-        case 'contact':
-          gsap.to({ v: 1 }, {
-            v: 0.35, duration: 1.2, ease: 'sine.out',
-            onUpdate: function () { speedMul = this.targets()[0].v; }
-          });
-          gsap.to({ v: 1 }, {
-            v: 0.6, duration: 1.2, ease: 'sine.out',
-            onUpdate: function () { radiusMul = this.targets()[0].v; }
-          });
-          gsap.delayedCall(2.2, () => { speedMul = 1; radiusMul = 1; });
-          break;
-      }
-    }
-
-    function drawEnergyLines(el) {
-      overlaySvg.innerHTML = '';
-      const rect = el.getBoundingClientRect();
-      const cx = innerWidth / 2, cy = innerHeight * 0.42;
-      for (let i = 0; i < 5; i++) {
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        const px = rect.left + Math.random() * rect.width;
-        const py = rect.top + Math.random() * rect.height;
-        line.setAttribute('x1', px); line.setAttribute('y1', py);
-        line.setAttribute('x2', cx); line.setAttribute('y2', cy);
-        line.style.opacity = 0;
-        overlaySvg.appendChild(line);
-        gsap.to(line.style, { opacity: 1, duration: 0.3, delay: i * 0.05 });
-        gsap.to(line.style, {
-          opacity: 0, duration: 0.6, delay: 1.2 + i * 0.05,
-          onComplete: () => line.remove()
-        });
-      }
-    }
-  </script>
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <a class="wordmark" href="#top" aria-label="Back to top">RN<span>.</span></a>
+      <p>AI / ML · Full-stack systems · Cybersecurity</p>
+      <span>© <span data-year></span> Ramesh N.</span>
+    </div>
+  </footer>
 </body>
-
 </html>
